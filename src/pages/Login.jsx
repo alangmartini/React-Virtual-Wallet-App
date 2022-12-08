@@ -33,7 +33,6 @@ class Login extends Component {
 
   render() {
     const { email, password, isButtonValid } = this.state;
-
     return (
       <div>
         <h1>Login</h1>
