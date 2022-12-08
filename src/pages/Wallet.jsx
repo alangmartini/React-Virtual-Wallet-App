@@ -1,4 +1,5 @@
 import React from 'react';
+import WalletForm from '../components/WalletForm';
 import store from '../redux/store';
 
 class Wallet extends React.Component {
@@ -16,6 +17,7 @@ class Wallet extends React.Component {
             <p data-testid="header-currency-field">BRL</p>
           </div>
         </header>
+        <WalletForm />
       </div>
     );
   }
