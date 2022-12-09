@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { findCorrectRate, deleteExpenseAction,
-  calculateExpenseSum, updateTotalAmountAction } from '../redux/actions';
+  calculateExpenseSum, updateTotalAmountAction,
+  editExpenseAction } from '../redux/actions';
 
 class Table extends Component {
   parseInfomation = (expenses) => {
@@ -18,6 +19,11 @@ class Table extends Component {
     dispatch(deleteExpenseAction(id));
     const sum = calculateExpenseSum(expenses.filter((expense) => expense.id !== id));
     dispatch(updateTotalAmountAction(sum));
+  };
+
+  handleEdit = (id) => {
+    const { dispatch } = this.props;
+    dispatch(editExpenseAction(id));
   };
 
   render() {
@@ -65,6 +71,13 @@ class Table extends Component {
                       onClick={ () => this.handleDelete(id) }
                     >
                       Deletar
+                    </button>
+                    <button
+                      type="button"
+                      data-testid="edit-btn"
+                      onClick={ () => this.handleEdit(id) }
+                    >
+                      Editar
                     </button>
 
                   </td>

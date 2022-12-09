@@ -11,6 +11,8 @@ export const CURRENCY = 'CURRENCY';
 export const COTATION = 'COTATION';
 export const REGISTER_EXPENSE = 'REGISTER_EXPENSE';
 export const DELETE = 'DELETE';
+export const EDIT = 'EDIT';
+export const RESOLVE_EDIT = 'RESOLVE_EDIT';
 
 export const currentAction = (payload) => ({
   type: CURRENCY,
@@ -22,9 +24,10 @@ export const updateTotalAmountAction = (cotation) => ({
   payload: cotation,
 });
 
-export const registerExpense = (expenseObj) => ({
+export const registerExpense = (expenseObj, teste) => ({
   type: REGISTER_EXPENSE,
   payload: expenseObj,
+  id: teste,
 });
 
 export const reduceCoinAndPrices = (arr) => {
@@ -62,7 +65,7 @@ export const calculateExpenseSum = (expensesArr) => {
   return sum;
 };
 
-export const fetchCoinThunk = (input) => (dispatch, getState) => {
+export const fetchCoinThunk = (input, editId) => (dispatch, getState) => {
   const { wallet: { expenses } } = getState();
 
   const allExpenses = reduceCoinAndPrices([...expenses, input]);
@@ -74,7 +77,7 @@ export const fetchCoinThunk = (input) => (dispatch, getState) => {
   return fetch(`https://economia.awesomeapi.com.br/last/${endpoint}`)
     .then((response) => response.json())
     .then((cotation) => {
-      dispatch(registerExpense({ ...input, exchangeRates: cotation }));
+      dispatch(registerExpense({ ...input, exchangeRates: cotation }, editId));
       const sum = calculateExpenseSum(getState().wallet.expenses);
       dispatch(updateTotalAmountAction(sum));
     });
@@ -82,6 +85,16 @@ export const fetchCoinThunk = (input) => (dispatch, getState) => {
 
 export const deleteExpenseAction = (payload) => ({
   type: DELETE,
+  payload,
+});
+
+export const editExpenseAction = (payload) => ({
+  type: EDIT,
+  payload,
+});
+
+export const resolveEdit = (payload) => ({
+  type: RESOLVE_EDIT,
   payload,
 });
 

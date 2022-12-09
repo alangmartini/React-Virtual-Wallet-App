@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { currentAction, fetchCoinThunk } from '../redux/actions';
+import { currentAction, fetchCoinThunk, deleteExpenseAction,
+  editExpenseAction } from '../redux/actions';
 
 const INITIAL_STATE = {
   fetched: false,
@@ -44,10 +45,17 @@ class WalletForm extends Component {
   };
 
   handleSubmit = () => {
-    this.setState({ input: INITIAL_STATE.input });
-    const { dispatch } = this.props;
+    const { dispatch, editMode, idToEdit } = this.props;
     const { input } = this.state;
-    dispatch(fetchCoinThunk(input));
+    this.setState({ input: INITIAL_STATE.input });
+    if (!editMode) {
+      dispatch(fetchCoinThunk(input));
+      return;
+    }
+    console.log('id to edit is ', idToEdit);
+    dispatch(deleteExpenseAction(idToEdit));
+    dispatch(fetchCoinThunk(input, idToEdit));
+    dispatch(editExpenseAction(idToEdit));
   };
 
   render() {
@@ -57,7 +65,7 @@ class WalletForm extends Component {
       method,
       tag },
     } = this.state;
-    const { coins } = this.props;
+    const { coins, editMode } = this.props;
     return (
       <div>
         WalletForm
@@ -104,9 +112,9 @@ class WalletForm extends Component {
         </select>
         <button
           type="button"
-          onClick={ this.handleSubmit }
+          onClick={ () => this.handleSubmit() }
         >
-          Adicionar despesa
+          { editMode ? 'Editar despesa' : 'Adicionar despesa' }
         </button>
       </div>
     );
@@ -115,11 +123,15 @@ class WalletForm extends Component {
 
 const mapStateToProps = (state) => ({
   coins: state.wallet.currencies,
+  editMode: state.wallet.editMode,
+  idToEdit: state.wallet.idToEdit,
 });
 
 WalletForm.propTypes = {
   dispatch: PropTypes.func.isRequired,
   coins: PropTypes.arrayOf(PropTypes.string).isRequired,
+  editMode: PropTypes.bool.isRequired,
+  idToEdit: PropTypes.number.isRequired,
 };
 
 export default connect(mapStateToProps)(WalletForm);
