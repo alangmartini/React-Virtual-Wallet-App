@@ -1,28 +1,27 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { findCorrectRate, deleteExpenseAction,
+  calculateExpenseSum, updateTotalAmountAction } from '../redux/actions';
 
 class Table extends Component {
-  findCorrectRate = (expenseObject) => {
-    const { exchangeRates } = expenseObject;
-    const isTest = !Object.keys(exchangeRates)[0].includes('BRL');
-    const keyName = isTest ? expenseObject.currency : `${expenseObject.currency}BRL`;
-    const expenseCoin = Object.keys(exchangeRates)
-      .find((rateName) => rateName === keyName);
-    return exchangeRates[expenseCoin];
-  };
-
   parseInfomation = (expenses) => {
     const withConversionCoin = expenses.map((info) => {
-      const expenseRate = this.findCorrectRate(info);
+      const expenseRate = findCorrectRate(info);
       return { ...info, conversion: expenseRate.name };
     });
     return withConversionCoin;
   };
 
+  handleDelete = (id) => {
+    const { dispatch, expenses } = this.props;
+    dispatch(deleteExpenseAction(id));
+    const sum = calculateExpenseSum(expenses.filter((expense) => expense.id !== id));
+    dispatch(updateTotalAmountAction(sum));
+  };
+
   render() {
     const { expenses } = this.props;
-    console.log(expenses);
     return (
       <div>
         <h1>Table</h1>
@@ -44,8 +43,8 @@ class Table extends Component {
           <tbody>
             { expenses.length > 0 && this.parseInfomation(expenses).map((expense) => {
               const { description,
-                tag, value, method, conversion } = expense;
-              const currentRate = this.findCorrectRate(expense);
+                tag, value, method, conversion, id } = expense;
+              const currentRate = findCorrectRate(expense);
               const rate = currentRate.ask;
               const convertedValue = (parseFloat(rate) * parseFloat(value))
                 .toFixed(2);
@@ -59,6 +58,16 @@ class Table extends Component {
                   <td>{ parseFloat(currentRate.ask).toFixed(2) }</td>
                   <td>{ convertedValue }</td>
                   <td>Real</td>
+                  <td>
+                    <button
+                      type="button"
+                      data-testid="delete-btn"
+                      onClick={ () => this.handleDelete(id) }
+                    >
+                      Deletar
+                    </button>
+
+                  </td>
                 </tr>
               );
             })}
@@ -76,6 +85,7 @@ const mapStateToProps = (state) => ({
 
 Table.propTypes = {
   expenses: PropTypes.arrayOf('').isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps)(Table);
