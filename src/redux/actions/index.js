@@ -26,18 +26,22 @@ export const registerExpense = (expenseObj) => ({
   payload: expenseObj,
 });
 
+export const reduceCoinAndPrices = (arr) => {
+  const object = arr.reduce((acc, { currency, value }) => {
+    if (acc[currency]) {
+      acc[currency] += Number(value);
+    } else {
+      acc[currency] = Number(value);
+    }
+    return acc;
+  }, {});
+  return object;
+};
+
 export const fetchCoinThunk = (input) => (dispatch, getState) => {
   const { wallet: { expenses } } = getState();
 
-  const allExpenses = [...expenses, input]
-    .reduce((acc, { currency, value }) => {
-      if (acc[currency]) {
-        acc[currency] += Number(value);
-      } else {
-        acc[currency] = Number(value);
-      }
-      return acc;
-    }, {});
+  const allExpenses = reduceCoinAndPrices([...expenses, input]);
 
   const allCoins = new Set(Object.keys(allExpenses));
   const endpoint = Array.from(allCoins)
@@ -56,4 +60,12 @@ export const fetchCoinThunk = (input) => (dispatch, getState) => {
       dispatch(registerExpense({ ...input, exchangeRates: cotation }));
       dispatch(updateTotalAmountAction(sum));
     });
+};
+
+export const exporter = {
+  userAction,
+  currentAction,
+  updateTotalAmountAction,
+  registerExpense,
+  fetchCoinThunk,
 };
