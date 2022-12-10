@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { act } from 'react-dom/test-utils';
 import { renderWithRouterAndRedux } from './helpers/renderWith';
 import mockData from './helpers/mockData';
 import App from '../App';
@@ -12,18 +13,9 @@ import { userAction,
   editExpenseAction,
   calculateExpenseSum } from '../redux/actions';
 import rootReducer from '../redux/reducers';
-import { act } from 'react-dom/test-utils';
 
 const TEST_EMAIL = 'algo@alguem.com';
 const TEST_PASSWORD = '123456';
-
-const rawFirstExpense = {
-  value: '11',
-  currency: 'USD',
-  method: 'Cartão de crédito',
-  tag: 'Lazer',
-  description: 'Onze dólares',
-};
 
 const rawSecondExpense = {
   value: '20',
