@@ -22,7 +22,6 @@ const userReducer = (state = INITIAL_STATE, action) => {
         password: payload.password,
       };
     }
-
     return { ...state };
   default:
     return state;

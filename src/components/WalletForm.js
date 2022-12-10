@@ -35,10 +35,10 @@ class WalletForm extends Component {
 
   fetchOptions = async () => {
     const { dispatch } = this.props;
-    const response = await fetch('https://economia.awesomeapi.com.br/json/all');
-    const json = await response.json();
     const removeUSDT = (arr) => arr.filter((coin) => coin !== 'USDT');
-    dispatch(currentAction(removeUSDT(Object.keys(json))));
+    fetch('https://economia.awesomeapi.com.br/json/all')
+      .then((response) => response.json())
+      .then((options) => dispatch(currentAction(removeUSDT(Object.keys(options)))));
     this.setState({
       fetched: true,
     });
@@ -113,6 +113,7 @@ class WalletForm extends Component {
         <button
           type="button"
           onClick={ () => this.handleSubmit() }
+          data-testid="submit-button"
         >
           { editMode ? 'Editar despesa' : 'Adicionar despesa' }
         </button>

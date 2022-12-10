@@ -19,24 +19,21 @@ export const currentAction = (payload) => ({
   payload,
 });
 
-export const updateTotalAmountAction = (cotation) => ({
+export const updateTotalAmountAction = (sum) => ({
   type: COTATION,
-  payload: cotation,
+  payload: sum,
 });
 
-export const registerExpense = (expenseObj, teste) => ({
+export const registerExpense = (expenseObj, id) => ({
   type: REGISTER_EXPENSE,
   payload: expenseObj,
-  id: teste,
+  id,
 });
 
-export const reduceCoinAndPrices = (arr) => {
-  const object = arr.reduce((acc, { currency, value }) => {
-    if (acc[currency]) {
-      acc[currency] += Number(value);
-    } else {
-      acc[currency] = Number(value);
-    }
+export const reduceCoinAndPrices = (arrOfExpenses) => {
+  const object = arrOfExpenses.reduce((acc, { currency, value }) => {
+    const numValue = Number(value);
+    acc[currency] = acc[currency] ? acc[currency] + numValue : numValue;
     return acc;
   }, {});
   return object;
@@ -56,11 +53,8 @@ export const findCorrectRate = (expenseObject) => {
 export const calculateExpenseSum = (expensesArr) => {
   const sum = expensesArr.reduce((acc, expense) => {
     const correctRate = findCorrectRate(expense);
-    if (correctRate) {
-      const convertedValue = expense.value * parseFloat(correctRate.ask);
-      return (parseFloat(acc) + convertedValue).toFixed(2);
-    }
-    return acc;
+    const convertedValue = expense.value * parseFloat(correctRate.ask);
+    return (parseFloat(acc) + convertedValue).toFixed(2);
   }, 0);
   return sum;
 };
@@ -97,11 +91,3 @@ export const resolveEdit = (payload) => ({
   type: RESOLVE_EDIT,
   payload,
 });
-
-export const exporter = {
-  userAction,
-  currentAction,
-  updateTotalAmountAction,
-  registerExpense,
-  fetchCoinThunk,
-};

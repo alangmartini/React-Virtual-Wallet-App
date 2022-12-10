@@ -56,7 +56,7 @@ class Table extends Component {
                 .toFixed(2);
               return (
                 <tr key={ value }>
-                  <td>{ description }</td>
+                  <td data-testid="teste">{ description }</td>
                   <td>{ tag }</td>
                   <td>{ method }</td>
                   <td>{ parseFloat(value).toFixed(2) }</td>
